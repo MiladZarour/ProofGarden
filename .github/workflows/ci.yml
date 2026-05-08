@@ -6,6 +6,40 @@ on:
   pull_request:
 
 jobs:
+  repository-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject generated or runtime artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          blocked="$(
+            git ls-files \
+              ':(glob)**/__pycache__/**' \
+              ':(glob)**/.pytest_cache/**' \
+              ':(glob)**/node_modules/**' \
+              ':(glob)**/dist/**' \
+              ':(glob)**/coverage/**' \
+              ':(glob)**/*.pyc' \
+              ':(glob)**/*.log' \
+              ':(glob)**/*.sqlite' \
+              ':(glob)**/*.sqlite3' \
+              ':(glob)**/proofgarden.db' \
+              ':(glob)**/test_proofgarden.db' \
+              ':(glob)backend/uploads/**' \
+              ':(glob)backend/test_uploads/**' \
+              ':(glob)**/*.tsbuildinfo' \
+              ':(glob)frontend/vite.config.js' \
+              ':(glob)frontend/vite.config.d.ts'
+          )"
+          if [ -n "$blocked" ]; then
+            echo "Generated or runtime artifacts are tracked:"
+            echo "$blocked"
+            echo "Move these out of git and update .gitignore if needed."
+            exit 1
+          fi
+
   backend:
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +53,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run backend tests
-        working-directory: backend
         run: pytest
 
   frontend:
