@@ -121,6 +121,30 @@ npm run test -- --run
 npm run build
 ```
 
+### Docker
+
+Run the full test suite in containers:
+
+```bash
+docker compose -f docker-compose.test.yml run --rm backend-tests
+docker compose -f docker-compose.test.yml run --rm frontend-tests
+```
+
+Run one side at a time:
+
+```bash
+docker compose -f docker-compose.test.yml run --rm backend-tests
+docker compose -f docker-compose.test.yml run --rm frontend-tests
+```
+
+Clean Docker test volumes when you want a fresh dependency install:
+
+```bash
+docker compose -f docker-compose.test.yml down --volumes
+```
+
+There is also a manual `Docker Tests` GitHub Action for running the same Compose checks in GitHub when needed.
+
 ## API Overview
 
 - `GET /api/health`

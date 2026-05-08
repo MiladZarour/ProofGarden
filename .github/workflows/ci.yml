@@ -39,6 +39,8 @@ jobs:
             echo "Move these out of git and update .gitignore if needed."
             exit 1
           fi
+      - name: Validate Docker test compose file
+        run: docker compose -f docker-compose.test.yml config
 
   backend:
     runs-on: ubuntu-latest

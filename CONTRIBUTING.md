@@ -40,7 +40,6 @@ On Windows PowerShell, activate the backend environment with:
 ## Backend Checks
 
 ```bash
-cd backend
 pytest
 ```
 
@@ -48,8 +47,17 @@ pytest
 
 ```bash
 cd frontend
-npm run test
+npm run test -- --run
 npm run build
+```
+
+## Docker Checks
+
+Use Docker Compose when you want a clean Python and Node environment without installing dependencies directly on your machine:
+
+```bash
+docker compose -f docker-compose.test.yml run --rm backend-tests
+docker compose -f docker-compose.test.yml run --rm frontend-tests
 ```
 
 ## Analysis Module Standards
@@ -70,4 +78,3 @@ Please include:
 - Why it changed
 - How you tested it
 - Any privacy or safety considerations
-

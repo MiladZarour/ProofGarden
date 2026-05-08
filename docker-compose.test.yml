@@ -1,0 +1,33 @@
+services:
+  backend-tests:
+    image: python:3.11-slim
+    working_dir: /workspace
+    environment:
+      PIP_ROOT_USER_ACTION: ignore
+      PROOFGARDEN_DATABASE_URL: sqlite:////tmp/proofgarden-test.db
+      PROOFGARDEN_UPLOAD_DIR: /tmp/proofgarden-test-uploads
+    volumes:
+      - .:/workspace
+      - backend_pip_cache:/root/.cache/pip
+    command: >
+      sh -c "python -m pip install --upgrade pip
+      && pip install -r backend/requirements.txt
+      && pytest"
+
+  frontend-tests:
+    image: node:20-bookworm-slim
+    working_dir: /workspace/frontend
+    volumes:
+      - .:/workspace
+      - frontend_node_modules:/workspace/frontend/node_modules
+      - frontend_npm_cache:/root/.npm
+    command: >
+      sh -c "npm ci
+      && npm run test -- --run
+      && ./node_modules/.bin/tsc --noEmit
+      && ./node_modules/.bin/vite build --outDir /tmp/proofgarden-frontend-dist --emptyOutDir"
+
+volumes:
+  backend_pip_cache:
+  frontend_npm_cache:
+  frontend_node_modules:

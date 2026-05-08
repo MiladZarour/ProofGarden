@@ -1,0 +1,18 @@
+name: Docker Tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-compose-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run backend tests in Docker
+        run: docker compose -f docker-compose.test.yml run --rm backend-tests
+      - name: Run frontend tests in Docker
+        run: docker compose -f docker-compose.test.yml run --rm frontend-tests
+
